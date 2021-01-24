@@ -15,16 +15,16 @@ def parseMassDNS(filepath):
     with open(filepath) as f:
         for line in f:
             response = json.loads(line)
-            print("Response: ", response)
-            if (response['resp_type'] == 'A'):
-                domain = response['query_name']
-                ip  = response['data']
-                if (ip not in domain_map.keys()):
-                    if domain.endswith('.'):
-                        domain = domain[:-1]
-                    if (domain not in seenDomains):
-                        domain_map[ip] = domain
-                        seenDomains.append(domain)
+            if (response['type'] == 'A'):
+                domain = response['name']
+                for ans in response['data']['answers']:
+                    ip  = ans['data']
+                    if (ip not in domain_map.keys()):
+                        if domain.endswith('.'):
+                            domain = domain[:-1]
+                        if (domain not in seenDomains):
+                            domain_map[ip] = domain
+                            seenDomains.append(domain)
     return domain_map
 
 def parseMasscan(masscan, domain_map):
