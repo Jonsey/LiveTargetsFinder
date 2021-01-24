@@ -15,6 +15,7 @@ def parseMassDNS(filepath):
     with open(filepath) as f:
         for line in f:
             response = json.loads(line)
+            print("Response: ", response)
             if (response['resp_type'] == 'A'):
                 domain = response['query_name']
                 ip  = response['data']
@@ -44,7 +45,7 @@ def parseMasscan(masscan, domain_map):
                         url = 'http://' + domain
                     else:
                         url = 'http://' + domain + ":" + str(port)
-                    
+
                     if (url not in targetUrls):
                         targetUrls.append(url)
                         nmapInput.append(domain)
@@ -61,7 +62,7 @@ def writeMassDNSOutput(domain_map, domainOutput, ipOutput):
         domainFile.write('\n')
         ipFile.write(ip)
         ipFile.write('\n')
-    
+
     domainFile.close()
     ipFile.close()
     print(Fore.GREEN + "\n - Found " + Fore.YELLOW + str(foundCount) + Fore.GREEN + " resolvable domain/IP pairs")
@@ -71,7 +72,7 @@ def writeMasscanOutput(urls, outputFile):
     for targetUrl in urls:
         urlFile.write(targetUrl)
         urlFile.write('\n')
-    
+
     urlFile.close()
 
 def generateUrls(masscan, domain_map, urlOutput):
@@ -158,7 +159,7 @@ def parseNmapOutput(nmapOutput, hosts):
                 for s in host.services:
                     if (s.open()):
                         serviceName = ""
-                        hostRow["port"] = s.port                    
+                        hostRow["port"] = s.port
                         if (len(s.scripts_results) > 0):
                             for script in s.scripts_results:
                                 if ("id" not in script.keys() or "output" not in script.keys()):
@@ -224,8 +225,8 @@ def main(targetHosts, massdnsPath, masscanPath, resolvers, useNmap, dbOutput):
 
         # Run masscan on the live addresses collected from massdns
         nmapInput = processMasscan(ipOutput, domain_map, masscanOutput, masscanPath, urlOutput)
-        
-        nmapOutput = "" 
+
+        nmapOutput = ""
         if useNmap:
             if (dbOutput == ""):
                 dbOutput = "output/" + "liveTargetsFinder.sqlite3"
@@ -294,14 +295,14 @@ if __name__ == "__main__":
             print(Fore.RED + "Expected location: " + str(traversedResolversPath) + "\n")
             exit(0)
         resolvers = str(traversedResolversPath)
-        
+
         masscanPath = args.masscan_path if args.masscan_path else './masscan/bin/masscan'
         if not Path(masscanPath).exists():
             print("\033[91m" + "\033[1m" + "\nError - Unable to locate the Masscan binary.")
             print(Fore.RED + "Expected location: " + str(Path(masscanPath).resolve()) + "\n")
             exit(0)
         masscanPath = str(Path(masscanPath).resolve())
-        
+
         useNmap = args.useNmap
         if (args.db_path):
             dbOutputPath = args.db_path
