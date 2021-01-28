@@ -17,14 +17,18 @@ def parseMassDNS(filepath):
             response = json.loads(line)
             if (response['type'] == 'A'):
                 domain = response['name']
-                for ans in response['data']['answers']:
-                    ip  = ans['data']
-                    if (ip not in domain_map.keys()):
-                        if domain.endswith('.'):
-                            domain = domain[:-1]
-                        if (domain not in seenDomains):
-                            domain_map[ip] = domain
-                            seenDomains.append(domain)
+                try:
+                    for ans in response['data']['answers']:
+                        ip  = ans['data']
+                        if (ip not in domain_map.keys()):
+                            if domain.endswith('.'):
+                                domain = domain[:-1]
+                            if (domain not in seenDomains):
+                                domain_map[ip] = domain
+                                seenDomains.append(domain)
+                except Exception as e:
+                    print("Error getting answers from: ", response, e) 
+
     return domain_map
 
 def parseMasscan(masscan, domain_map):
