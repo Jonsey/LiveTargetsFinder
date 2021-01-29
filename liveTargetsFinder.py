@@ -20,13 +20,14 @@ def parseMassDNS(filepath):
                 print("Response.data", response['data'])
                 if ("answers" in response['data']):
                     for ans in response['data']['answers']:
-                        ip  = ans['data']
-                        if (ip not in domain_map.keys()):
-                            if domain.endswith('.'):
-                                domain = domain[:-1]
-                            if (domain not in seenDomains):
-                                domain_map[ip] = domain
-                                seenDomains.append(domain)
+                        if (ans["type"] == 'A')
+                            ip  = ans['data']
+                            if (ip not in domain_map.keys()):
+                                if domain.endswith('.'):
+                                    domain = domain[:-1]
+                                if (domain not in seenDomains):
+                                    domain_map[ip] = domain
+                                    seenDomains.append(domain)
 
     return domain_map
 
